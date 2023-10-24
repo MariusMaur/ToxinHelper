@@ -2,7 +2,6 @@
 
 ### Table of contents <!-- omit in toc -->
 - [Script overview](#script-overview)
-		- [](#)
 - [Usage](#usage)
 	- [Prepare environment](#prepare-environment)
 	- [How to run:](#how-to-run)
@@ -12,7 +11,6 @@
 
 
 ## Script overview
-
 
 **This is written specifically for the venom group at UiO and is integrated with the supercomputer Saga at Sigma2.**
 
