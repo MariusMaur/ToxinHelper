@@ -1,0 +1,86 @@
+import os
+
+# Get the basename for the provided fasta_file from the config
+basename = os.path.splitext(os.path.basename(config["fasta_file"]))[0]
+
+
+rule all:
+    input:
+        "1_SignalP5/CD1_SP_{}.signalp5".format(basename),
+        "1_SignalP5/CD1_SP_{}.fa".format(basename),
+        "1_SignalP5/Mature_CD1_SP_{}.fa".format(basename),
+        "2_toxprot_hits_and_alignments/toxprot_hits.txt",
+        "2_toxprot_hits_and_alignments/alignments",
+        "3_interproscan/CD1_SP_{}_IPR.tsv".format(basename),
+        "CD1_SP_{}_summary.tsv".format(basename)
+
+rule get_uniqe_sp_peptides:
+    input:
+        fasta_file=config["fasta_file"]
+    output:
+        "1_SignalP5/CD1_SP_{}.signalp5".format(basename),
+        "1_SignalP5/CD1_SP_{}.fa".format(basename),
+        "1_SignalP5/Mature_CD1_SP_{}.fa".format(basename)
+    resources:
+        mem=16*1024,  
+        cpu=4,
+        time="04:00:00"
+    params:
+        rule_name="get_uniqe_sp_peptides"
+    shell:
+        """
+        slurm_scripts/get_unique_sp_peptides.slurm {input.fasta_file}
+        """
+
+rule toxprot:
+    input:
+        mature_peptides="1_SignalP5/Mature_CD1_SP_{}.fa".format(basename)
+    output:
+        "2_toxprot_hits_and_alignments/toxprot_hits.txt",
+        directory("2_toxprot_hits_and_alignments/alignments")
+    resources:
+        mem=16*1024,  
+        cpu=4,
+        time="04:00:00"
+    params:
+        rule_name="toxprot"
+    shell:
+        """
+        slurm_scripts/toxprot.slurm {input.mature_peptides}
+        """
+
+rule interproscan:
+    input:
+        sp_peptides="1_SignalP5/CD1_SP_{}.fa".format(basename)
+    output:
+        "3_interproscan/CD1_SP_{}_IPR.tsv".format(basename)
+    resources:
+        mem=64*1024,  
+        cpu=32,
+        time="08:00:00"
+    params:
+        rule_name="interproscan"
+    shell:
+        """
+        slurm_scripts/interproscan.slurm {input.sp_peptides}
+        """
+
+rule summarize:
+    input:
+        signalp="1_SignalP5/CD1_SP_{}.signalp5".format(basename),
+        toxprot="2_toxprot_hits_and_alignments/toxprot_hits.txt",
+        interproscan="3_interproscan/CD1_SP_{}_IPR.tsv".format(basename),
+        fasta="1_SignalP5/CD1_SP_{}.fa".format(basename)
+    output:
+        "CD1_SP_{}_summary.tsv".format(basename)
+    resources:
+        mem=8*1024,  
+        cpu=2,
+        time="01:00:00"
+    params:
+        rule_name="summarize"
+    shell:
+        """
+        slurm_scripts/summarize.slurm {input.signalp} {input.toxprot} {input.interproscan} {input.fasta}
+        """
+

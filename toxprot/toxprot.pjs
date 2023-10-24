@@ -1,0 +1,22 @@
+{
+  "version": "1.2",
+  "dbname": "toxprot",
+  "dbtype": "Protein",
+  "db-version": 5,
+  "description": "uniprotkb_taxonomy_id_33208_AND_cc_tiss_2023_10_19_NO_SPACES.fasta",
+  "number-of-letters": 825984,
+  "number-of-sequences": 7797,
+  "last-updated": "2023-10-20T09:11:00",
+  "number-of-volumes": 1,
+  "bytes-total": 2255805,
+  "bytes-to-cache": 896310,
+  "files": [
+    "toxprot.pdb",
+    "toxprot.phr",
+    "toxprot.pin",
+    "toxprot.pot",
+    "toxprot.psq",
+    "toxprot.ptf",
+    "toxprot.pto"
+  ]
+}
