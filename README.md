@@ -26,7 +26,7 @@
 
  | Query ID | Signal peptide cleavage sites | Length | C's after Signal Peptide | Panther Annotation | IPR annotations | Best Tox-Prot Hit | 
  |:--:|:--:|:--:|:--:|:--:|:--:|:--:|
-
+ ||||||||
 <br>
 
 ## Usage
@@ -66,9 +66,9 @@ options:
 .
 ├── 0_slurm_logs
 ├── 1_SignalP5
-├── 2_toxprot_hits_and_alignments
+├── 2_toxprot_hits_and_alignments <-- TOX-PROT MULTI-FASTA's
 ├── 3_interproscan
-├── CD1_SP_CJK_201120_Eivind_AT_Cc1_Cc3__FDR_summary.tsv
+├── CD1_SP_Your_File_summary.tsv <-- OUTPUT TABLE
 ├── master.py
 ├── README.md
 ├── slurm_scripts
