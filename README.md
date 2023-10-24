@@ -25,9 +25,8 @@
   - Tox-Prot (with an e-value of 1e-3), producing a multi-FASTA file for each hit.
 - Executes a summary script which creates the output table, with the columns:
 
-###
 
-| Query ID | Signal peptide cleavage sites | Length | C's after Signal Peptide | Panther Annotation | IPR annotations | Best Tox-Prot Hit |
+| Query ID | Signal peptide cleavage site | Length | C's after Signal Peptide | Panther Annotation | IPR annotations | Best Tox-Prot Hit |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 ||||||||
 
