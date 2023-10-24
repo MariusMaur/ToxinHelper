@@ -27,7 +27,7 @@
 
 ###
 
-| Query ID | Signal peptide cleavage sites | Length | C's after Signal Peptide | Panther Annotation | IPR annotations | Best Tox-Prot Hit | 
+| Query ID | Signal peptide cleavage sites | Length | C's after Signal Peptide | Panther Annotation | IPR annotations | Best Tox-Prot Hit |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 ||||||||
 
