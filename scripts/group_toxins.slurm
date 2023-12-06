@@ -24,7 +24,7 @@ MATURE_PEPTIDES=$(realpath $1)
 OUTDIR="4_toxin_groups"
 
 # Get the groups
-python slurm_scripts/group_toxins.py --fasta ${MATURE_PEPTIDES} \
+python scripts/group_toxins.py --fasta ${MATURE_PEPTIDES} \
 	--database ${MATURE_PEPTIDES} 
 	--outdir ${OUTDIR}
 

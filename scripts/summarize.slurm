@@ -26,7 +26,7 @@ TOXIN_GROUPS=$(realpath $5)
 OUTPUT=$(basename ${SIGNALP%.signalp5})_summary.tsv
 
 
-python slurm_scripts/summarize_stats.py \
+python scripts/summarize_stats.py \
 	--signalp ${SIGNALP} --ips ${IPS} \
 	--toxprot ${TOXPROT} --fasta ${FASTA} \
 	--groups ${TOXIN_GROUPS} --out ${OUTPUT}
