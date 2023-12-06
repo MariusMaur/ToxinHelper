@@ -111,14 +111,13 @@ def main(fasta_file, database, output_dir=None):
         os.makedirs(blast_out_dir, exist_ok=True)
         os.makedirs(group_files_dir, exist_ok=True)
 
-        # Create a temporary file for the combined database
+        # Create a temporary file for the database
         temp_db_filename = os.path.join(temp_dir, 'temp_db.fasta')
         with open(temp_db_filename, 'w+') as temp_db_file:
-            # Write original database sequences and query sequences to the temporary file
+            # Write original database sequences to the temporary file
             with open(database, 'r') as db_handle:
                 temp_db_file.write(db_handle.read())
-            with open(fasta_file, 'r') as fasta_handle:
-                temp_db_file.write(fasta_handle.read())
+
 
 
         try:

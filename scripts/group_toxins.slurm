@@ -30,4 +30,4 @@ python scripts/group_toxins.py --fasta ${MATURE_PEPTIDES} \
 
 # get the list for the summary
 grep ">" ${OUTDIR}/group_files/* | awk -F: '{print $2 "\t" $1}' | sed 's/>//g' | \
-sed 's/${OUTDIR}\/group_files\/group//g' | sed  's/\.fasta//g' > group_summary.tsv
+sed 's/${OUTDIR}\/group_files\/group//g' | sed  's/\.fasta//g' > ${OUTDIR}/group_summary.tsv
