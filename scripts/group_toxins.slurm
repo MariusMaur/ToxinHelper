@@ -15,7 +15,9 @@ PARTITION=${PARTITION:-normal}
 #SBATCH --mem=$MEM
 #SBATCH --partition=$PARTITION
 
-
+# Load packages 
+ml BLAST+/2.14.0-gompi-2022b
+ml Biopython/1.81-foss-2022b
 
 # Variables
 MATURE_PEPTIDES=$(realpath $1)
