@@ -74,7 +74,7 @@ rule group_data:
     resources:
         mem=16*1024,  
         cpu=4,
-        time="01:00:00"
+        time="08:00:00"
     params:
         rule_name="group_toxins"
     shell:
