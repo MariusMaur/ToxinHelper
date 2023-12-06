@@ -12,6 +12,7 @@ rule all:
         "2_toxprot_hits_and_alignments/toxprot_hits.txt",
         "2_toxprot_hits_and_alignments/alignments",
         "3_interproscan/CD1_SP_{}_IPR.tsv".format(basename),
+        "4_groups/group_summary.tsv",
         "CD1_SP_{}_summary.tsv".format(basename)
 
 rule get_uniqe_sp_peptides:
@@ -29,7 +30,7 @@ rule get_uniqe_sp_peptides:
         rule_name="get_uniqe_sp_peptides"
     shell:
         """
-        slurm_scripts/get_unique_sp_peptides.slurm {input.fasta_file}
+        scripts/get_unique_sp_peptides.slurm {input.fasta_file}
         """
 
 rule toxprot:
@@ -46,7 +47,7 @@ rule toxprot:
         rule_name="toxprot"
     shell:
         """
-        slurm_scripts/toxprot.slurm {input.mature_peptides}
+        scripts/toxprot.slurm {input.mature_peptides}
         """
 
 rule interproscan:
@@ -62,7 +63,23 @@ rule interproscan:
         rule_name="interproscan"
     shell:
         """
-        slurm_scripts/interproscan.slurm {input.sp_peptides}
+        scripts/interproscan.slurm {input.sp_peptides}
+        """
+
+rule group_data:
+    input:
+        mature_peptides="1_SignalP5/Mature_CD1_SP_{}.fa".format(basename)
+    output:
+        "4_toxin_groups/group_summary.tsv"
+    resources:
+        mem=16*1024,  
+        cpu=4,
+        time="01:00:00"
+    params:
+        rule_name="group_toxins"
+    shell:
+        """
+        scripts/group_toxins.slurm {input.mature_peptides}
         """
 
 rule summarize:
@@ -70,7 +87,8 @@ rule summarize:
         signalp="1_SignalP5/CD1_SP_{}.signalp5".format(basename),
         toxprot="2_toxprot_hits_and_alignments/toxprot_hits.txt",
         interproscan="3_interproscan/CD1_SP_{}_IPR.tsv".format(basename),
-        fasta="1_SignalP5/CD1_SP_{}.fa".format(basename)
+        fasta="1_SignalP5/CD1_SP_{}.fa".format(basename),
+        toxin_groups="4_groups/group_summary.tsv"
     output:
         "CD1_SP_{}_summary.tsv".format(basename)
     resources:
@@ -81,6 +99,8 @@ rule summarize:
         rule_name="summarize"
     shell:
         """
-        slurm_scripts/summarize.slurm {input.signalp} {input.toxprot} {input.interproscan} {input.fasta}
+        scripts/summarize.slurm {input.signalp} {input.toxprot} {input.interproscan} {input.fasta} {input.toxin_groups}
         """
+
+
 

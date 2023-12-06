@@ -47,18 +47,29 @@ def extract_from_fasta(fasta_file, ips_hash):
             fasta_cys_counts[seq_id] = post_signalp_seq.count("C")
     return fasta_lengths, fasta_cys_counts
 
+def read_groups(groups_file):
+    groups_hash = {}
+    with open(groups_file, 'r') as f:
+        for line in f:
+            protein, group = line.strip().split()
+            groups_hash[protein] = group
+    return groups_hash
+
 def main():
-    parser = argparse.ArgumentParser(description='Summarizes interproscan tsv with signalp and toxprot output.')
+    parser = argparse.ArgumentParser(description='Summarizes a bunch of files for manual toxin annotation.')
     parser.add_argument('--ips', required=True, help='Path to interproscan file')
     parser.add_argument('--signalp', required=True, help='Path to signalp file')
     parser.add_argument('--toxprot', required=True, help='Path to toxprot file')
     parser.add_argument('--fasta', required=True, help='Path to fasta file')
     parser.add_argument('--out', required=True, help='Path to output file')
+    parser.add_argument('--groups_file', required=True, help='Path to groups file')
 
     args = parser.parse_args()
 
     ips_hash = read_signalp(args.signalp)
     fasta_lengths, fasta_cys_counts = extract_from_fasta(args.fasta, ips_hash)
+    groups_hash = read_groups(args.groups_file)
+    
     # Read ipscan file into hash
     with open(args.ips, 'r') as f:
         for line in f:
@@ -137,7 +148,9 @@ def main():
             if not interpro:
                 interpro = ['no-domains']
 
-            out_f.write(f"{protein}\t{signalp_start}-{signalp_end}\t{seq_length}\t{cys_count}\t{'|'.join(panther)}\t{'|'.join(interpro)}\t{'|'.join(others)}\t{toxprot_hit}\n")
+            group = groups_hash.get(protein, 'no-group')  # Fetch group from groups_hash
+
+            out_f.write(f"{protein}\t{group}\t{signalp_start}-{signalp_end}\t{seq_length}\t{cys_count}\t{'|'.join(panther)}\t{'|'.join(interpro)}\t{'|'.join(others)}\t{toxprot_hit}\n")
 
 if __name__ == "__main__":
     main()

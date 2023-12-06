@@ -22,7 +22,11 @@ SIGNALP=$(realpath $1)
 TOXPROT=$(realpath $2)
 IPS=$(realpath $3)
 FASTA=$(realpath $4)
+TOXIN_GROUPS=$(realpath $5)
 OUTPUT=$(basename ${SIGNALP%.signalp5})_summary.tsv
 
 
-python slurm_scripts/summarize_stats.py --signalp ${SIGNALP} --ips ${IPS} --toxprot ${TOXPROT} --fasta ${FASTA} --out ${OUTPUT}
+python slurm_scripts/summarize_stats.py \
+	--signalp ${SIGNALP} --ips ${IPS} \
+	--toxprot ${TOXPROT} --fasta ${FASTA} \
+	--groups ${TOXIN_GROUPS} --out ${OUTPUT}
