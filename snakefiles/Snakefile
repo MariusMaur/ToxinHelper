@@ -12,7 +12,7 @@ rule all:
         "2_toxprot_hits_and_alignments/toxprot_hits.txt",
         "2_toxprot_hits_and_alignments/alignments",
         "3_interproscan/CD1_SP_{}_IPR.tsv".format(basename),
-        "4_groups/group_summary.tsv",
+        "4_toxin_groups/group_summary.tsv",
         "CD1_SP_{}_summary.tsv".format(basename)
 
 rule get_uniqe_sp_peptides:
@@ -88,7 +88,7 @@ rule summarize:
         toxprot="2_toxprot_hits_and_alignments/toxprot_hits.txt",
         interproscan="3_interproscan/CD1_SP_{}_IPR.tsv".format(basename),
         fasta="1_SignalP5/CD1_SP_{}.fa".format(basename),
-        toxin_groups="4_groups/group_summary.tsv"
+        toxin_groups="4_toxin_groups/group_summary.tsv"
     output:
         "CD1_SP_{}_summary.tsv".format(basename)
     resources:
