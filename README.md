@@ -21,7 +21,7 @@
 - Annotates sequences that have signal peptides with:
   - InterProScan
   - Tox-Prot (with an e-value of 1e-3), producing a multi-FASTA file for each hit.
-- Groups sequences using psiblast (e-value: 1e-3, inclusion_ethresh: 1e-10, and 3 iterations) and then uses an Union-Find algorithm to cluster groups with shared hits. each group then gets its own number ID.
+- Groups sequences using psiblast (e-value: 1e-3, inclusion_ethresh: 1e-10, and 3 iterations) and then uses an Union-Find algorithm to cluster groups with shared hits. Each group then gets its own number ID.
 - Executes a summary script which creates the output table, with the columns:
 
 
@@ -41,7 +41,7 @@ First, set up a tmux or screen environment (to run the pipeline while offline), 
 ```bash
 module load Mamba/4.14.0-0
 source ${EBROOTMAMBA}/bin/activate
-conda activate /cluster/projects/nn9825k/admin/mamba/snakemake
+conda activate /cluster/projects/nn9825k/admin/mamba/marius_snakemake
 ```
 
 ### How to run:
