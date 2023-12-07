@@ -4,8 +4,8 @@
 JOB_NAME=${JOB_NAME:-group_toxins}
 TIME=${TIME:-01:00:00}
 NTASKS=${NTASKS:-1}
-CPUS=${CPUS:-4}
-MEM=${MEM:-16}
+CPUS=${CPUS:-16}
+MEM=${MEM:-32}
 PARTITION=${PARTITION:-normal}
 
 #SBATCH --job-name=$JOB_NAME
@@ -31,4 +31,4 @@ python scripts/group_toxins.py --fasta ${MATURE_PEPTIDES} \
 
 # get the list for the summary
 grep ">" ${OUTDIR}/group_files/* | awk -F: '{print $2 "\t" $1}' | sed 's/>//g' | \
-sed 's/${OUTDIR}\/group_files\/group//g' | sed  's/\.fasta//g' > ${OUTDIR}/group_summary.tsv
+sed 's/'${OUTDIR}'\/group_files\/group//g' | sed  's/\.fasta//g' > ${OUTDIR}/group_summary.tsv
