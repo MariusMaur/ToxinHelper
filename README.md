@@ -1,3 +1,5 @@
+![Alt text](logo_wasp.png)
+
 # Toxin-Annotation-Helper <!-- omit in toc -->
 
 ### Table of contents <!-- omit in toc -->
