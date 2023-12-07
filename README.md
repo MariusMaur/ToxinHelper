@@ -3,9 +3,9 @@
 ### Table of contents <!-- omit in toc -->
 - [Script overview](#script-overview)
 - [Usage](#usage)
-	- [Prepare environment](#prepare-environment)
-	- [How to run:](#how-to-run)
-	- [Output](#output)
+  - [Prepare environment](#prepare-environment)
+  - [How to run:](#how-to-run)
+  - [Output](#output)
 - [Program versions](#program-versions)
 
 
@@ -21,12 +21,13 @@
 - Annotates sequences that have signal peptides with:
   - InterProScan
   - Tox-Prot (with an e-value of 1e-3), producing a multi-FASTA file for each hit.
+- Groups sequences using psiblast (e-value: 1e-3, inclusion_ethresh: 1e-10, and 3 iterations) and then uses an Union-Find algorithm to cluster groups with shared hits. each group then gets its own number ID.
 - Executes a summary script which creates the output table, with the columns:
 
 
-| Query ID | Signal peptide cleavage site | Length | C's after Signal Peptide | Panther Annotation | IPR annotations | Best Tox-Prot Hit |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-||||||||
+| Query ID | Group ID | Signal peptide cleavage site | Length | C's after Signal Peptide | Panther Annotation | IPR annotations | Best Tox-Prot Hit |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+|||||||||
 
 
 ## Usage
@@ -68,6 +69,7 @@ options:
 ├── 1_SignalP5
 ├── 2_toxprot_hits_and_alignments <-- TOX-PROT MULTI-FASTA's
 ├── 3_interproscan
+├── 4_toxin_groups
 ├── CD1_SP_Your_File_summary.tsv <-- OUTPUT TABLE
 ├── master.py
 ├── README.md
@@ -84,3 +86,5 @@ options:
 - InterProScan v5.62-94.0
 - parallel v20220722
 - BLAST+ v2.13.0
+- BLAST+/2.14.0-gompi-2022b (group toxins)
+- Biopython/1.81-foss-2022b (group toxins)
