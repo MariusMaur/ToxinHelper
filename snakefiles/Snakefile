@@ -72,8 +72,8 @@ rule group_data:
     output:
         "4_toxin_groups/group_summary.tsv"
     resources:
-        mem=16*1024,  
-        cpu=4,
+        mem=32*1024,  
+        cpu=16,
         time="08:00:00"
     params:
         rule_name="group_toxins"

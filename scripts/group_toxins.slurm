@@ -25,6 +25,7 @@ OUTDIR="4_toxin_groups"
 
 # Get the groups
 python scripts/group_toxins.py --fasta ${MATURE_PEPTIDES} \
+	--parallel 16 \
 	--database ${MATURE_PEPTIDES} \
 	--outdir ${OUTDIR}
 
