@@ -57,7 +57,7 @@ for FASTA in $(ls ${SPLIT_FA}/*.fa* | sort -rV);
 cat *part*signalp5 | sed '/#/d' >> ../1_SignalP5/CD1_SP_$(basename ${fasta_file%.fa*}).signalp5
 
 # Get sequences with signal peptides
-seqkit grep -f <(cat *part*signalp5 | sed '/#/d' | grep "SP" | cut -f 1) CD1_CJK_201120_Eivind_AT_Cc1_Cc3__FDR_nodups.fa > ../1_SignalP5/CD1_SP_$(basename ${fasta_file%.fa*}).fa
+seqkit grep -f <(cat *part*signalp5 | sed '/#/d' | grep "SP" | cut -f 1) CD1_$(basename ${fasta_file%.fa*})_nodups.fa > ../1_SignalP5/CD1_SP_$(basename ${fasta_file%.fa*}).fa
 
 # Get mature sequences
 cat *mature* > ../1_SignalP5/Mature_CD1_SP_$(basename ${fasta_file%.fa*}).fa
