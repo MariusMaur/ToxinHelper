@@ -84,10 +84,10 @@ rule group_data:
 
 rule summarize:
     input:
-        signalp="1_SignalP5/CD1_{}.signalp5".format(basename),
+        signalp="1_SignalP5/CD1_SP_{}.signalp5".format(basename),
         toxprot="2_toxprot_hits_and_alignments/toxprot_hits.txt",
         interproscan="3_interproscan/CD1_{}_IPR.tsv".format(basename),
-        fasta="1_SignalP5/CD1_{}.fa".format(basename),
+        fasta_file=config["fasta_file"],
         toxin_groups="4_toxin_groups/group_summary.tsv"
     output:
         "CD1_{}_summary.tsv".format(basename)
@@ -99,7 +99,7 @@ rule summarize:
         rule_name="summarize"
     shell:
         """
-        scripts/summarize.slurm {input.signalp} {input.toxprot} {input.interproscan} {input.fasta} {input.toxin_groups}
+        scripts/summarize.slurm {input.signalp} {input.toxprot} {input.interproscan} {input.fasta_file} {input.toxin_groups}
         """
 
 
