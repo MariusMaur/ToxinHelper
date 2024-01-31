@@ -61,3 +61,6 @@ seqkit grep -f <(cat *part*signalp5 | sed '/#/d' | grep "SP" | cut -f 1) CD1_$(b
 
 # Get mature sequences
 cat *mature* > ../1_SignalP5/Mature_CD1_SP_$(basename ${fasta_file%.fa*}).fa
+
+# Get unique sequences
+cp CD1_$(basename ${fasta_file%.fa*})_nodups.fa  ../1_SignalP5/.

@@ -9,6 +9,7 @@ rule all:
         "1_SignalP5/CD1_SP_{}.signalp5".format(basename),
         "1_SignalP5/CD1_SP_{}.fa".format(basename),
         "1_SignalP5/Mature_CD1_SP_{}.fa".format(basename),
+        "1_SignalP5/CD1_{}.fa".format(basename)
         "2_toxprot_hits_and_alignments/toxprot_hits.txt",
         "2_toxprot_hits_and_alignments/alignments",
         "3_interproscan/CD1_{}_IPR.tsv".format(basename),
@@ -21,7 +22,8 @@ rule get_uniqe_sp_peptides:
     output:
         "1_SignalP5/CD1_SP_{}.signalp5".format(basename),
         "1_SignalP5/CD1_SP_{}.fa".format(basename),
-        "1_SignalP5/Mature_CD1_SP_{}.fa".format(basename)
+        "1_SignalP5/Mature_CD1_SP_{}.fa".format(basename),
+        "1_SignalP5/CD1_{}.fa".format(basename)
     resources:
         mem=16*1024,  
         cpu=4,
@@ -35,7 +37,7 @@ rule get_uniqe_sp_peptides:
 
 rule toxprot:
     input:
-        fasta_file=config["fasta_file"]
+        fasta_file="1_SignalP5/CD1_{}.fa".format(basename)
     output:
         "2_toxprot_hits_and_alignments/toxprot_hits.txt",
         directory("2_toxprot_hits_and_alignments/alignments")
@@ -52,7 +54,7 @@ rule toxprot:
 
 rule interproscan:
     input:
-        fasta_file=config["fasta_file"]
+        fasta_file="1_SignalP5/CD1_{}.fa".format(basename)
     output:
         "3_interproscan/CD1_{}_IPR.tsv".format(basename)
     resources:
@@ -68,7 +70,7 @@ rule interproscan:
 
 rule group_data:
     input:
-        fasta_file=config["fasta_file"]
+        fasta_file="1_SignalP5/CD1_{}.fa".format(basename)
     output:
         "4_toxin_groups/group_summary.tsv"
     resources:
@@ -87,7 +89,7 @@ rule summarize:
         signalp="1_SignalP5/CD1_SP_{}.signalp5".format(basename),
         toxprot="2_toxprot_hits_and_alignments/toxprot_hits.txt",
         interproscan="3_interproscan/CD1_{}_IPR.tsv".format(basename),
-        fasta_file=config["fasta_file"],
+        fasta_file="1_SignalP5/CD1_{}.fa".format(basename),
         toxin_groups="4_toxin_groups/group_summary.tsv"
     output:
         "CD1_{}_summary.tsv".format(basename)
