@@ -116,8 +116,13 @@ def main():
     # Produce output
     with open(args.out, 'w') as out_f:
         for protein in sorted(ips_hash.keys()):
-            signalp_start = ips_hash[protein].get('signalp_start', 'no start')
-            signalp_end = ips_hash[protein].get('signalp_end', 'no end')
+            signalp_info = ips_hash[protein].get('signalp_start', None)
+            if signalp_info is not None:
+                signalp_start = signalp_info
+                signalp_end = ips_hash[protein].get('signalp_end', 'no end')
+                sp_column = f"{signalp_start}-{signalp_end}"
+            else:
+                sp_column = '-'
             seq_length = fasta_lengths.get(protein, 'unknown length')
             cys_count = fasta_cys_counts.get(protein, 'unknown cysteine count')
             panther = []
@@ -150,7 +155,7 @@ def main():
 
             group = groups_hash.get(protein, 'no-group')  # Fetch group from groups_hash
 
-            out_f.write(f"{protein}\t{group}\t{signalp_start}-{signalp_end}\t{seq_length}\t{cys_count}\t{'|'.join(panther)}\t{'|'.join(interpro)}\t{'|'.join(others)}\t{toxprot_hit}\n")
+            out_f.write(f"{protein}\t{group}\t{sp_column}\t{seq_length}\t{cys_count}\t{'|'.join(panther)}\t{'|'.join(interpro)}\t{'|'.join(others)}\t{toxprot_hit}\n")
 
 if __name__ == "__main__":
     main()

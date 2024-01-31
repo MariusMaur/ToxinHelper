@@ -11,9 +11,9 @@ rule all:
         "1_SignalP5/Mature_CD1_SP_{}.fa".format(basename),
         "2_toxprot_hits_and_alignments/toxprot_hits.txt",
         "2_toxprot_hits_and_alignments/alignments",
-        "3_interproscan/CD1_SP_{}_IPR.tsv".format(basename),
+        "3_interproscan/CD1_{}_IPR.tsv".format(basename),
         "4_toxin_groups/group_summary.tsv",
-        "CD1_SP_{}_summary.tsv".format(basename)
+        "CD1_{}_summary.tsv".format(basename)
 
 rule get_uniqe_sp_peptides:
     input:
@@ -35,7 +35,7 @@ rule get_uniqe_sp_peptides:
 
 rule toxprot:
     input:
-        mature_peptides="1_SignalP5/Mature_CD1_SP_{}.fa".format(basename)
+        fasta_file=config["fasta_file"]
     output:
         "2_toxprot_hits_and_alignments/toxprot_hits.txt",
         directory("2_toxprot_hits_and_alignments/alignments")
@@ -47,14 +47,14 @@ rule toxprot:
         rule_name="toxprot"
     shell:
         """
-        scripts/toxprot.slurm {input.mature_peptides}
+        scripts/toxprot.slurm {input.fasta_file}
         """
 
 rule interproscan:
     input:
-        sp_peptides="1_SignalP5/CD1_SP_{}.fa".format(basename)
+        fasta_file=config["fasta_file"]
     output:
-        "3_interproscan/CD1_SP_{}_IPR.tsv".format(basename)
+        "3_interproscan/CD1_{}_IPR.tsv".format(basename)
     resources:
         mem=64*1024,  
         cpu=32,
@@ -63,12 +63,12 @@ rule interproscan:
         rule_name="interproscan"
     shell:
         """
-        scripts/interproscan.slurm {input.sp_peptides}
+        scripts/interproscan.slurm {input.fasta_file}
         """
 
 rule group_data:
     input:
-        mature_peptides="1_SignalP5/Mature_CD1_SP_{}.fa".format(basename)
+        fasta_file=config["fasta_file"]
     output:
         "4_toxin_groups/group_summary.tsv"
     resources:
@@ -79,18 +79,18 @@ rule group_data:
         rule_name="group_toxins"
     shell:
         """
-        scripts/group_toxins.slurm {input.mature_peptides}
+        scripts/group_toxins.slurm {input.fasta_file}
         """
 
 rule summarize:
     input:
-        signalp="1_SignalP5/CD1_SP_{}.signalp5".format(basename),
+        signalp="1_SignalP5/CD1_{}.signalp5".format(basename),
         toxprot="2_toxprot_hits_and_alignments/toxprot_hits.txt",
-        interproscan="3_interproscan/CD1_SP_{}_IPR.tsv".format(basename),
-        fasta="1_SignalP5/CD1_SP_{}.fa".format(basename),
+        interproscan="3_interproscan/CD1_{}_IPR.tsv".format(basename),
+        fasta="1_SignalP5/CD1_{}.fa".format(basename),
         toxin_groups="4_toxin_groups/group_summary.tsv"
     output:
-        "CD1_SP_{}_summary.tsv".format(basename)
+        "CD1_{}_summary.tsv".format(basename)
     resources:
         mem=8*1024,  
         cpu=2,

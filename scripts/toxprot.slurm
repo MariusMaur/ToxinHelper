@@ -21,14 +21,14 @@ module load BLAST+/2.13.0-gompi-2022a
 module load SeqKit/2.3.1
 
 # Variables
-MATURE_PEPTIDES=$(realpath $1)
+FASTA_FILE=$(realpath $1)
 OUTPUT_DIR=2_toxprot_hits_and_alignments
 
 # Make output dir
 mkdir -p ${OUTPUT_DIR}
 
 # Run blastp on mature peptides
-blastp -query ${MATURE_PEPTIDES} -db toxprot/toxprot -out ${OUTPUT_DIR}/toxprot_hits.txt -evalue 1e-3 -outfmt 6
+blastp -query ${FASTA_FILE} -db toxprot/toxprot -out ${OUTPUT_DIR}/toxprot_hits.txt -evalue 1e-3 -outfmt 6
 
 # Get alignments
 OUTPUT_ALN=${OUTPUT_DIR}/alignments
@@ -52,7 +52,7 @@ while read -r line; do
 
     # Check if this query has been seen before. If not, fetch its sequence.
     if [[ -z "${query_hits[$query]}" ]]; then
-        seqkit grep -p "$query" "$MATURE_PEPTIDES" > "${OUTPUT_ALN}/${query_out}_with_hits.fasta"
+        seqkit grep -p "$query" "$FASTA_FILE" > "${OUTPUT_ALN}/${query_out}_with_hits.fasta"
         query_hits["$query"]=1  # Mark the query as seen
     fi
 

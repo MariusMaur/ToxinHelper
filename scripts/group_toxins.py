@@ -127,7 +127,7 @@ def main(fasta_file, database, output_dir=None, num_processes=4):
         unique_groups = set()
 
         with multiprocessing.Pool(processes=num_processes) as pool:
-            results = pool.starmap(parallel_psiblast, [(record, temp_db_filename, "1e-3", blast_out_dir, temp_dir) for record in query_records])
+            results = pool.starmap(parallel_psiblast, [(record, temp_db_filename, "1e-10", blast_out_dir, temp_dir) for record in query_records])
 
         for record, result_file in zip(query_records, results):
             hit_ids = set()

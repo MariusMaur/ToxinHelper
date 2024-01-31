@@ -20,13 +20,13 @@ ml BLAST+/2.14.0-gompi-2022b
 ml Biopython/1.81-foss-2022b
 
 # Variables
-MATURE_PEPTIDES=$(realpath $1)
+FASTA_FILE=$(realpath $1)
 OUTDIR="4_toxin_groups"
 
 # Get the groups
-python scripts/group_toxins.py --fasta ${MATURE_PEPTIDES} \
+python scripts/group_toxins.py --fasta ${FASTA_FILE} \
 	--parallel 16 \
-	--database ${MATURE_PEPTIDES} \
+	--database ${FASTA_FILE} \
 	--outdir ${OUTDIR}
 
 # get the list for the summary
