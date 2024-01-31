@@ -23,7 +23,7 @@ TOXPROT=$(realpath $2)
 IPS=$(realpath $3)
 FASTA=$(realpath $4)
 TOXIN_GROUPS=$(realpath $5)
-OUTPUT=$(basename ${SIGNALP%.signalp5})_summary.tsv
+OUTPUT=$(basename ${FASTA%.fa*})_summary.tsv
 
 
 python scripts/summarize_stats.py \
