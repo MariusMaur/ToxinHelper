@@ -9,7 +9,7 @@ rule all:
         "1_SignalP5/CD1_SP_{}.signalp5".format(basename),
         "1_SignalP5/CD1_SP_{}.fa".format(basename),
         "1_SignalP5/Mature_CD1_SP_{}.fa".format(basename),
-        "1_SignalP5/CD1_{}.fa".format(basename)
+        "1_SignalP5/CD1_{}.fa".format(basename),
         "2_toxprot_hits_and_alignments/toxprot_hits.txt",
         "2_toxprot_hits_and_alignments/alignments",
         "3_interproscan/CD1_{}_IPR.tsv".format(basename),
