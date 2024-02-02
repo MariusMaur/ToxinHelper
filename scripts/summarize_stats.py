@@ -159,54 +159,35 @@ def main():
             if transcript_id not in best_hits or evalue < best_hits[transcript_id]['evalue']:
                 best_hits[transcript_id] = {'hit': hit, 'evalue': evalue}
 
-    # Produce output
     with open(args.out, 'w') as out_f:
-    # Writing headers
-        headers = ["Protein ID", "N Prots in CD100 cluster", "Group", "SP position", "Prot Length", "Cysteines after SP", "Panther", "InterPro", "Others", "Toxprot best hit (<1e-3)"]
+        # Writing headers
+        headers = ["Protein ID", "N Prots in CD100 cluster", "Group", "SP position", "Prot Length", "Cysteines after SP", "Panther", "InterPro", "Toxprot best hit (<1e-3)"]
         out_f.write('\t'.join(headers) + '\n')
-        for protein in sorted(ips_hash.keys()):
-            signalp_info = ips_hash[protein].get('signalp_start', None)
+
+        for protein in sorted(fasta_lengths.keys()):
+            # Check if protein is in SignalP data
+            signalp_info = ips_hash.get(protein, {}).get('signalp_start', None)
             if signalp_info is not None:
                 signalp_start = signalp_info
-                signalp_end = ips_hash[protein].get('signalp_end', 'no end')
+                signalp_end = ips_hash.get(protein, {}).get('signalp_end', 'no end')
                 sp_column = f"{signalp_start}-{signalp_end}"
             else:
                 sp_column = '-'
+
             seq_length = fasta_lengths.get(protein, 'unknown length')
             cys_count = fasta_cys_counts.get(protein, 'unknown cysteine count')
-            panther = []
-            interpro = []
-            others = []
+
+            # Handle Panther and InterPro
+            panther_str = '|'.join(sorted(ips_hash.get(protein, {}).get('PANTHER', {}).values())) or 'no-hit'
+            interpro_str = '|'.join(sorted(ips_hash.get(protein, {}).get('INTERPRO', {}).values())) or 'no-domain'
+
             toxprot_hit = best_hits.get(protein, {}).get('hit', 'no-toxprot')
-            panther_sub = 0
 
-            if 'PANTHER' in ips_hash[protein] or 'PANTHER_SUB' in ips_hash[protein] or 'INTERPRO' in ips_hash[protein]:
-                if 'PANTHER' in ips_hash[protein]:
-                    for cur_panther, current in sorted(ips_hash[protein]['PANTHER'].items()):
-                        panther.append(current)
-                        if current != '-' and current != 'UNCHARACTERIZED':
-                            panther_sub = 1
-                    if panther_sub == 0 and 'PANTHER_SUB' in ips_hash[protein]:
-                        for _, current in sorted(ips_hash[protein]['PANTHER_SUB'].items()):
-                            panther.append(current)
-                if 'INTERPRO' in ips_hash[protein]:
-                    for cur_interpro, current in sorted(ips_hash[protein]['INTERPRO'].items()):
-                        interpro.append(current)
-            elif 'OTHER' in ips_hash[protein]:
-                for other_key, val in sorted(ips_hash[protein]['OTHER'].items()):
-                    for sub_key, sub_val in sorted(val.items()):
-                        others.append(f"{other_key}:{sub_key}:{sub_val}")
-
-            if not panther:
-                panther = ['no-hits']
-            if not interpro:
-                interpro = ['no-domains']
-
-            group = groups_hash.get(protein, 'no-group')  # Fetch group from groups_hash
+            group = groups_hash.get(protein, 'no-group')
             cluster_count = cluster_info.get(protein, 'no-cluster-info')
 
+            out_f.write(f"{protein}\t{cluster_count}\t{group}\t{sp_column}\t{seq_length}\t{cys_count}\t{panther_str}\t{interpro_str}\t{toxprot_hit}\n")
 
-            out_f.write(f"{protein}\t{cluster_count}\t{group}\t{sp_column}\t{seq_length}\t{cys_count}\t{'|'.join(panther)}\t{'|'.join(interpro)}\t{'|'.join(others)}\t{toxprot_hit}\n")
 
 if __name__ == "__main__":
     main()
