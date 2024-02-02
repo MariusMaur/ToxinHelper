@@ -75,9 +75,12 @@ def main():
         for line in f:
             line = line.strip()
             tokens = line.split('\t')
-            
-            if tokens[0] in ips_hash:
-                ips_hash[tokens[0]]['length'] = tokens[2]
+        
+            protein_id = tokens[0]
+            if protein_id not in ips_hash:
+                ips_hash[protein_id] = {} 
+
+            ips_hash[protein_id]['length'] = tokens[2]
 
             if tokens[3] == "PANTHER":
                 description = tokens[5]
