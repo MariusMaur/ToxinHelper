@@ -33,19 +33,26 @@ def extract_from_fasta(fasta_file, ips_hash):
             if line.startswith(">"):
                 if seq_id:
                     fasta_lengths[seq_id] = len(sequence)
-                    # Extract part of the sequence after signalp position
-                    post_signalp_seq = sequence[ips_hash.get(seq_id, {}).get('signalp_end', 0):].upper()
-                    fasta_cys_counts[seq_id] = post_signalp_seq.count("C")
+                    if seq_id in ips_hash and 'signalp_end' in ips_hash[seq_id]:
+                        # Extract part of the sequence after signalp position
+                        post_signalp_seq = sequence[ips_hash[seq_id]['signalp_end']:].upper()
+                        fasta_cys_counts[seq_id] = post_signalp_seq.count("C")
+                    else:
+                        fasta_cys_counts[seq_id] = "-"  
                 seq_id = line[1:].split()[0]
                 sequence = ""
             else:
                 sequence += line
         if seq_id:
             fasta_lengths[seq_id] = len(sequence)
-            # Extract part of the sequence after signalp position for the last sequence
-            post_signalp_seq = sequence[ips_hash.get(seq_id, {}).get('signalp_end', 0):].upper()
-            fasta_cys_counts[seq_id] = post_signalp_seq.count("C")
+            if seq_id in ips_hash and 'signalp_end' in ips_hash[seq_id]:
+                # Extract part of the sequence after signalp position for the last sequence
+                post_signalp_seq = sequence[ips_hash[seq_id]['signalp_end']:].upper()
+                fasta_cys_counts[seq_id] = post_signalp_seq.count("C")
+            else:
+                fasta_cys_counts[seq_id] = "-"  
     return fasta_lengths, fasta_cys_counts
+
 
 def read_groups(groups_file):
     groups_hash = {}
