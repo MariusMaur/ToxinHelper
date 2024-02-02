@@ -23,10 +23,12 @@ TOXPROT=$(realpath $2)
 IPS=$(realpath $3)
 FASTA=$(realpath $4)
 TOXIN_GROUPS=$(realpath $5)
+CLUSTER=$(realpath $6)
 OUTPUT=$(basename ${FASTA%.fa*})_summary.tsv
 
 
 python scripts/summarize_stats.py \
+	--cluster ${CLUSTER} \
 	--signalp ${SIGNALP} --ips ${IPS} \
 	--toxprot ${TOXPROT} --fasta ${FASTA} \
 	--groups ${TOXIN_GROUPS} --out ${OUTPUT}

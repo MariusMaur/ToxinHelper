@@ -90,7 +90,8 @@ rule summarize:
         toxprot="2_toxprot_hits_and_alignments/toxprot_hits.txt",
         interproscan="3_interproscan/CD1_{}_IPR.tsv".format(basename),
         fasta_file="1_SignalP5/CD1_{}.fa".format(basename),
-        toxin_groups="4_toxin_groups/group_summary.tsv"
+        toxin_groups="4_toxin_groups/group_summary.tsv",
+        cluster="tmp/CD1_{}_nodups.fa.clstr".format(basename)
     output:
         "CD1_{}_summary.tsv".format(basename)
     resources:
@@ -101,7 +102,7 @@ rule summarize:
         rule_name="summarize"
     shell:
         """
-        scripts/summarize.slurm {input.signalp} {input.toxprot} {input.interproscan} {input.fasta_file} {input.toxin_groups}
+        scripts/summarize.slurm {input.signalp} {input.toxprot} {input.interproscan} {input.fasta_file} {input.toxin_groups} {input.cluster}
         """
 
 

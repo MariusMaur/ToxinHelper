@@ -1,6 +1,40 @@
 import argparse
 from collections import defaultdict
 
+def read_cluster_file(cluster_file):
+    cluster_counts = defaultdict(int)
+    protein_to_cluster_count = {}
+
+    with open(cluster_file, 'r') as f:
+        current_cluster = None
+        for line in f:
+            if line.startswith('>Cluster'):
+                if current_cluster is not None:
+                    # Update count for proteins in the previous cluster
+                    for protein_id in protein_to_cluster_count:
+                        if protein_to_cluster_count[protein_id] == current_cluster:
+                            protein_to_cluster_count[protein_id] = cluster_counts[current_cluster]
+                current_cluster = line.split()[1]
+            else:
+                # Increment count for current cluster
+                cluster_counts[current_cluster] += 1
+
+                # Extract full protein ID including '.p' and number
+                protein_id = line.split('>')[1].split('...')[0]
+
+                # Map this protein ID to the current cluster
+                protein_to_cluster_count[protein_id] = current_cluster
+
+        # Update for the last cluster
+        for protein_id in protein_to_cluster_count:
+            if protein_to_cluster_count[protein_id] == current_cluster:
+                protein_to_cluster_count[protein_id] = cluster_counts[current_cluster]
+
+    return protein_to_cluster_count
+
+
+
+
 def read_signalp(signalp_file):
     ips_hash = {}
     with open(signalp_file, 'r') as f:
@@ -64,6 +98,7 @@ def read_groups(groups_file):
 
 def main():
     parser = argparse.ArgumentParser(description='Summarizes a bunch of files for manual toxin annotation.')
+    parser.add_argument('--cluster', required=True, help='Path to cluster file')
     parser.add_argument('--ips', required=True, help='Path to interproscan file')
     parser.add_argument('--signalp', required=True, help='Path to signalp file')
     parser.add_argument('--toxprot', required=True, help='Path to toxprot file')
@@ -76,7 +111,8 @@ def main():
     ips_hash = read_signalp(args.signalp)
     fasta_lengths, fasta_cys_counts = extract_from_fasta(args.fasta, ips_hash)
     groups_hash = read_groups(args.groups_file)
-    
+    cluster_info = read_cluster_file(args.cluster)
+
     # Read ipscan file into hash
     with open(args.ips, 'r') as f:
         for line in f:
@@ -125,6 +161,9 @@ def main():
 
     # Produce output
     with open(args.out, 'w') as out_f:
+    # Writing headers
+        headers = ["Protein ID", "N Prots in CD100 cluster", "Group", "SP position", "Prot Length", "Cysteines after SP", "Panther", "InterPro", "Others", "Toxprot best hit (<1e-3)"]
+        out_f.write('\t'.join(headers) + '\n')
         for protein in sorted(ips_hash.keys()):
             signalp_info = ips_hash[protein].get('signalp_start', None)
             if signalp_info is not None:
@@ -164,8 +203,10 @@ def main():
                 interpro = ['no-domains']
 
             group = groups_hash.get(protein, 'no-group')  # Fetch group from groups_hash
+            cluster_count = cluster_info.get(protein, 'no-cluster-info')
 
-            out_f.write(f"{protein}\t{group}\t{sp_column}\t{seq_length}\t{cys_count}\t{'|'.join(panther)}\t{'|'.join(interpro)}\t{'|'.join(others)}\t{toxprot_hit}\n")
+
+            out_f.write(f"{protein}\t{cluster_count}\t{group}\t{sp_column}\t{seq_length}\t{cys_count}\t{'|'.join(panther)}\t{'|'.join(interpro)}\t{'|'.join(others)}\t{toxprot_hit}\n")
 
 if __name__ == "__main__":
     main()
