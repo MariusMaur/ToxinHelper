@@ -2,35 +2,20 @@ import argparse
 from collections import defaultdict
 
 def read_cluster_file(cluster_file):
-    cluster_counts = defaultdict(int)
-    protein_to_cluster_count = {}
+    cluster_proteins = defaultdict(list)
 
     with open(cluster_file, 'r') as f:
         current_cluster = None
         for line in f:
             if line.startswith('>Cluster'):
-                if current_cluster is not None:
-                    # Update count for proteins in the previous cluster
-                    for protein_id in protein_to_cluster_count:
-                        if protein_to_cluster_count[protein_id] == current_cluster:
-                            protein_to_cluster_count[protein_id] = cluster_counts[current_cluster]
                 current_cluster = line.split()[1]
             else:
-                # Increment count for current cluster
-                cluster_counts[current_cluster] += 1
-
-                # Extract full protein ID including '.p' and number
+                # Extract full protein ID
                 protein_id = line.split('>')[1].split('...')[0]
+                # Add this protein ID to the current cluster
+                cluster_proteins[current_cluster].append(protein_id)
 
-                # Map this protein ID to the current cluster
-                protein_to_cluster_count[protein_id] = current_cluster
-
-        # Update for the last cluster
-        for protein_id in protein_to_cluster_count:
-            if protein_to_cluster_count[protein_id] == current_cluster:
-                protein_to_cluster_count[protein_id] = cluster_counts[current_cluster]
-
-    return protein_to_cluster_count
+    return cluster_proteins
 
 
 
@@ -161,7 +146,7 @@ def main():
 
     with open(args.out, 'w') as out_f:
         # Writing headers
-        headers = ["Protein ID", "N Prots in CD100 cluster", "Group", "SP position", "Prot Length", "Cysteines after SP", "Panther", "InterPro", "Toxprot best hit (<1e-3)"]
+        headers = ["Protein ID", "ClusterGroup", "Group", "SP position", "Prot Length", "Cysteines after SP", "Panther", "InterPro", "Toxprot best hit (<1e-3)"]
         out_f.write('\t'.join(headers) + '\n')
 
         for protein in sorted(fasta_lengths.keys()):
@@ -184,9 +169,18 @@ def main():
             toxprot_hit = best_hits.get(protein, {}).get('hit', 'no-toxprot')
 
             group = groups_hash.get(protein, 'no-group')
-            cluster_count = cluster_info.get(protein, 'no-cluster-info')
+            cluster_id = None
+            for cid, members in cluster_info.items():
+                if protein in members:
+                    cluster_id = cid
+                    break
+            if cluster_id is not None:
+                cluster_member_ids = cluster_info[cluster_id]
+            else:
+                cluster_member_ids = ['no-cluster-info']
+            cluster_members_str = ';'.join(cluster_member_ids)
 
-            out_f.write(f"{protein}\t{cluster_count}\t{group}\t{sp_column}\t{seq_length}\t{cys_count}\t{panther_str}\t{interpro_str}\t{toxprot_hit}\n")
+            out_f.write(f"{protein}\t{cluster_members_str}\t{group}\t{sp_column}\t{seq_length}\t{cys_count}\t{panther_str}\t{interpro_str}\t{toxprot_hit}\n")
 
 
 if __name__ == "__main__":
