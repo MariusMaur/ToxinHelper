@@ -44,6 +44,7 @@ def read_signalp(signalp_file):
 def extract_from_fasta(fasta_file, ips_hash):
     fasta_lengths = {}
     fasta_cys_counts = {}
+    fasta_sequences = {}  # Store the actual sequences
     with open(fasta_file, 'r') as f:
         seq_id = None
         sequence = ""
@@ -52,8 +53,8 @@ def extract_from_fasta(fasta_file, ips_hash):
             if line.startswith(">"):
                 if seq_id:
                     fasta_lengths[seq_id] = len(sequence)
+                    fasta_sequences[seq_id] = sequence  # Store the sequence
                     if seq_id in ips_hash and 'signalp_end' in ips_hash[seq_id]:
-                        # Extract part of the sequence after signalp position
                         post_signalp_seq = sequence[ips_hash[seq_id]['signalp_end']:].upper()
                         fasta_cys_counts[seq_id] = post_signalp_seq.count("C")
                     else:
@@ -64,13 +65,14 @@ def extract_from_fasta(fasta_file, ips_hash):
                 sequence += line
         if seq_id:
             fasta_lengths[seq_id] = len(sequence)
+            fasta_sequences[seq_id] = sequence  # Store the last sequence
             if seq_id in ips_hash and 'signalp_end' in ips_hash[seq_id]:
-                # Extract part of the sequence after signalp position for the last sequence
                 post_signalp_seq = sequence[ips_hash[seq_id]['signalp_end']:].upper()
                 fasta_cys_counts[seq_id] = post_signalp_seq.count("C")
             else:
                 fasta_cys_counts[seq_id] = "-"  
-    return fasta_lengths, fasta_cys_counts
+    return fasta_lengths, fasta_cys_counts, fasta_sequences
+
 
 
 def read_groups(groups_file):
@@ -94,7 +96,7 @@ def main():
     args = parser.parse_args()
 
     ips_hash = read_signalp(args.signalp)
-    fasta_lengths, fasta_cys_counts = extract_from_fasta(args.fasta, ips_hash)
+    fasta_lengths, fasta_cys_counts, fasta_sequences = extract_from_fasta(args.fasta, ips_hash)
     groups_hash = read_groups(args.groups_file)
     cluster_info = read_cluster_file(args.cluster)
 
@@ -146,7 +148,7 @@ def main():
 
     with open(args.out, 'w') as out_f:
         # Writing headers
-        headers = ["Protein ID", "ClusterGroup", "Group", "SP position", "Prot Length", "Cysteines after SP", "Panther", "InterPro", "Toxprot best hit (<1e-3)"]
+        headers = ["Protein ID", "ClusterGroup", "Group", "SP position", "Prot Length", "Cysteines after SP", "Panther", "InterPro", "Toxprot best hit (<1e-3)", "Sequence"]
         out_f.write('\t'.join(headers) + '\n')
 
         for protein in sorted(fasta_lengths.keys()):
@@ -161,6 +163,7 @@ def main():
 
             seq_length = fasta_lengths.get(protein, 'unknown length')
             cys_count = fasta_cys_counts.get(protein, 'unknown cysteine count')
+            sequence = fasta_sequences.get(protein, 'no-sequence-info')
 
             # Handle Panther and InterPro
             panther_str = '|'.join(sorted(ips_hash.get(protein, {}).get('PANTHER', {}).values())) or 'no-hit'
@@ -180,7 +183,7 @@ def main():
                 cluster_member_ids = ['no-cluster-info']
             cluster_members_str = ';'.join(cluster_member_ids)
 
-            out_f.write(f"{protein}\t{cluster_members_str}\t{group}\t{sp_column}\t{seq_length}\t{cys_count}\t{panther_str}\t{interpro_str}\t{toxprot_hit}\n")
+            out_f.write(f"{protein}\t{cluster_members_str}\t{group}\t{sp_column}\t{seq_length}\t{cys_count}\t{panther_str}\t{interpro_str}\t{toxprot_hit}\t{sequence}\n")
 
 
 if __name__ == "__main__":
